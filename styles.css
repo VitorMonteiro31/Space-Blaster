@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+}
+
+body {
+  text-align: center;
+  background-image: url(images/espacoazul.png);
+  background-color: black;
+  margin: 0;
+  padding: 0;
+}
+
+#gameCanvas {
+  border: 2px solid white;
+  background-color: #000000;
+  background-image: url(images/espaco.png);
+}
+
+.game-title {
+  font-size: 48px; /* Tamanho grande */
+  color: white;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-family: 'Arial', sans-serif;
+}
