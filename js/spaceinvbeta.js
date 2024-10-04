@@ -24,11 +24,18 @@ let enemyDirection = 1;
 let lastEnemyShootTime = 0;
 let lastPlayerShootTime = 0;
 let enemyShootInterval = 900;
-let playerShootInterval = 900; 
+let playerShootInterval = 0; 
 let startTime = Date.now();
 let moveDelay = 10; // Delay para movimentação travada
 
+let score = 0; // Inicializa a pontuação
+
 // Imagens
+const startScreenImage = new Image();
+startScreenImage.src = 'images/espacoazul.png'; // Substitua pelo caminho correto do PNG
+
+let gameStarted = false;
+
 const playerImage = new Image();
 playerImage.src = 'images/naves.png'; 
 
@@ -45,7 +52,10 @@ const explosionImage = new Image();
 explosionImage.src = 'images/explosion.gif';
 
 const victoryImage = new Image();
-victoryImage.src = 'images/ '; // Adicione aqui o caminho da sua imagem de vitória
+victoryImage.src = 'images/kass.png '; // Adicione aqui o caminho da sua imagem de vitória
+
+const defeatImage = new Image();
+defeatImage.src = 'images/ziggymoreu.png '; 
 
 let explosions = [];
 
@@ -57,6 +67,28 @@ const player = {
     height: 50,
     dx: 0
 };
+
+function showStartScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Desenhar o PNG no centro do canvas
+    const imageX = (canvas.width / 2) - (startScreenImage.width / 2);
+    const imageY = (canvas.height / 2) - (startScreenImage.height / 2) - 50; // Ajuste a posição vertical se necessário
+    
+    ctx.drawImage(startScreenImage, imageX, imageY);
+    
+    // Texto para instruir o jogador a começar o jogo
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("Pressione Enter para jogar", canvas.width / 2, canvas.height / 2 + 100);
+}
+
+function startGame() {
+    gameStarted = true;
+    // Começar o jogo, reiniciar variáveis, etc.
+    initGame();
+}
 
 // Cria inimigos
 function createEnemies(rows, cols) {
@@ -164,6 +196,8 @@ function drawHUD() {
     ctx.font = "20px Arial";
     ctx.textAlign = "left";
     ctx.fillText(`Tempo: ${Math.floor(elapsedTime / 1000)} s`, 10, 30);
+    
+    drawScore();  // Adiciona a pontuação ao HUD
 
     // Desenha as vidas restantes
     ctx.textAlign = "right";
@@ -212,17 +246,19 @@ function handleBulletCollisionWithEnemies(bullets, enemies) {
                 bullet.y + bullet.height > enemy.y &&
                 enemy.alive
             ) {
-                enemy.alive = false;
-                bullets.splice(index, 1);
+                enemy.alive = false;  // Mata o inimigo
+                bullets.splice(index, 1);  // Remove a bala
+                
+                score += 100; // Incrementa a pontuação (100 pontos por inimigo morto)
 
                 // Adiciona uma explosão
                 explosions.push({
                     x: enemy.x,
                     y: enemy.y,
-                    width: 50, // Ajuste conforme o tamanho da explosão
-                    height: 50, // Ajuste conforme o tamanho da explosão
-                    startTime: Date.now(), // Adicione o tempo de início
-                    lifetime: 500 // Tempo em milissegundos que a explosão deve aparecer
+                    width: 50,
+                    height: 50,
+                    startTime: Date.now(),
+                    lifetime: 500
                 });
             }
         });
@@ -333,6 +369,13 @@ function shootEnemies() {
     }
 }
 
+function drawScore() {
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText(`Pontuação: ${score}`, 10, 60);  // Exibe a pontuação no HUD
+}
+
 // Verifica se o jogador perdeu
 function checkGameOver() {
     enemies.forEach(enemy => {
@@ -387,7 +430,18 @@ document.addEventListener("keydown", e => {
 document.addEventListener("keyup", e => {
     if (e.code === "ArrowLeft" || e.code === "ArrowRight") player.dx = 0;
 });
-
+// Adiciona o listener para teclas
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'f') { // Se 'f' for a tecla de disparo
+        shoot();
+    }
+});
+// Detectar o pressionamento da tecla Enter para iniciar o jogo
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !gameStarted) {
+        startGame();
+    }
+});
 
 
 // Atualiza a posição do jogador com movimento suave
@@ -404,7 +458,11 @@ function updatePlayer() {
 // Função principal do jogo
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (!isPaused) {
+    
+    // Exibe a tela de "jogar" se o jogo ainda não começou
+    if (!gameStarted) {
+        showStartScreen(); // Mostra a tela inicial com o PNG
+    } else if (!isPaused) {
         if (!isGameOver && !isVictory) {
             updatePlayer();
             moveEnemies();
@@ -422,32 +480,39 @@ function gameLoop() {
     }
 
     if (isGameOver) {
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        // Verifica se a imagem foi carregada
+        if (defeatImage.complete) {
+            ctx.drawImage(defeatImage, 0, 0, canvas.width, canvas.height);
+        }
         ctx.font = "40px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle"; // Centraliza verticalmente
         ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
         ctx.font = "20px Arial";
         ctx.fillText("Pressione R para reiniciar", canvas.width / 2, canvas.height / 2 + 40);
+        
+        ctx.fillText(`Pontuação total: ${score}`, canvas.width / 2, canvas.height / 2 + 100);
     } else if (isVictory) {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         if (victoryImage.complete) {
-            // Ajusta o tamanho da imagem de vitória para preencher todo o canvas
             ctx.drawImage(victoryImage, 0, 0, canvas.width, canvas.height);
         }
 
         // Ajusta o texto da tela de vitória
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle"; // Centraliza verticalmente
         ctx.fillText("Vitória!", canvas.width / 2, canvas.height / 2);
         ctx.font = "20px Arial";
         ctx.fillText("Pressione R para jogar novamente", canvas.width / 2, canvas.height / 2 + 40);
+
+        ctx.fillText(`Pontuação final: ${score}`, canvas.width / 2, canvas.height / 2 + 100);
     } else if (isPaused) {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
