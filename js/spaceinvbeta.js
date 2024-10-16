@@ -24,7 +24,7 @@ let enemyDirection = 1;
 let lastEnemyShootTime = 0;
 let lastPlayerShootTime = 0;
 let enemyShootInterval = 900;
-let playerShootInterval = 0; 
+let playerShootInterval = 900; 
 let startTime = Date.now();
 let moveDelay = 10; // Delay para movimentação travada
 
@@ -32,7 +32,7 @@ let score = 0; // Inicializa a pontuação
 
 // Imagens
 const startScreenImage = new Image();
-startScreenImage.src = 'images/espacoazul.png'; // Substitua pelo caminho correto do PNG
+startScreenImage.src = ''; 
 
 let gameStarted = false;
 
@@ -40,22 +40,22 @@ const playerImage = new Image();
 playerImage.src = 'images/naves.png'; 
 
 const enemyImage = new Image();
-enemyImage.src = 'images/inimigo.png'; // Substitua pelo caminho da sua imagem de inimigo
+enemyImage.src = 'images/inimigo.png'; 
 
 const bulletImage = new Image();
-bulletImage.src = 'images/tiro.png'; // Substitua pelo caminho da sua imagem de munição
+bulletImage.src = 'images/tiro.png'; 
 
 const enemyBulletImage = new Image();
-enemyBulletImage.src = 'images/tiro2.png'; // Substitua pelo caminho da sua imagem de munição dos inimigos
+enemyBulletImage.src = 'images/tiro2.png'; 
 
 const explosionImage = new Image();
 explosionImage.src = 'images/explosion.gif';
 
 const victoryImage = new Image();
-victoryImage.src = 'images/kass.png '; // Adicione aqui o caminho da sua imagem de vitória
+victoryImage.src = 'images/kass.png'; 
 
 const defeatImage = new Image();
-defeatImage.src = 'images/ziggymoreu.png '; 
+defeatImage.src = 'images/kass.png'; 
 
 let explosions = [];
 
@@ -161,8 +161,8 @@ function drawEnemies() {
             // Verifica se a imagem foi carregada antes de desenhar
             if (enemyImage.complete) {
                 // Ajuste o tamanho da imagem conforme necessário
-                const enemyWidth = enemy.width;  // Pode ajustar conforme a imagem
-                const enemyHeight = enemy.height; // Pode ajustar conforme a imagem
+                const enemyWidth = 60;  // Pode ajustar conforme a imagem
+                const enemyHeight = 50; // Pode ajustar conforme a imagem
 
                 // Desenha a imagem do inimigo na posição correta
                 ctx.drawImage(enemyImage, enemy.x, enemy.y, enemyWidth, enemyHeight);
@@ -346,7 +346,7 @@ function drawExplosions() {
 // Função de tiro do jogador
 function shoot() {
     if (Date.now() - lastPlayerShootTime > playerShootInterval) {
-        bullets.push({ x: player.x + player.width / 2 - 10, y: player.y, width: 20, height: 20, speed: 14 }); // Ajuste o tamanho da munição conforme necessário
+        bullets.push({ x: player.x + player.width / 2 - 10, y: player.y, width: 15, height: 30, speed: 14 }); // Ajuste o tamanho da munição conforme necessário
         lastPlayerShootTime = Date.now();
         
     }
@@ -360,8 +360,8 @@ function shootEnemies() {
             enemyBullets.push({
                 x: enemy.x + enemy.width / 2 - 2,
                 y: enemy.y + enemy.height,
-                width: 15,
-                height: 15,
+                width: 10,
+                height: 30,
                 speed: enemyBulletSpeed
             });
         });
