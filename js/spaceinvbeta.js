@@ -52,10 +52,10 @@ const explosionImage = new Image();
 explosionImage.src = 'images/explosion.gif';
 
 const victoryImage = new Image();
-victoryImage.src = 'images/kass.png'; 
+victoryImage.src = ''; 
 
 const defeatImage = new Image();
-defeatImage.src = 'images/kass.png'; 
+defeatImage.src = ''; 
 
 let explosions = [];
 
