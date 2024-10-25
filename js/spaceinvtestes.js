@@ -52,10 +52,10 @@ const explosionImage = new Image();
 explosionImage.src = 'images/explosion.gif';
 
 const victoryImage = new Image();
-victoryImage.src = 'images/kass.png '; // Adicione aqui o caminho da sua imagem de vitória
+victoryImage.src = ''; // Adicione aqui o caminho da sua imagem de vitória
 
 const defeatImage = new Image();
-defeatImage.src = 'images/ziggymoreu.png '; 
+defeatImage.src = ''; 
 
 let explosions = [];
 
